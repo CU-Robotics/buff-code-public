@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python3.6
 ####################
 #		Launcher 
 #  	This is the main script for all CV 
@@ -35,7 +35,7 @@ def main():
 	bvExecutable = os.path.join(projectRoot, 'buffpy', 'lib', 'buffvision.py')
 
 	# Start ROS-Core
-	sb.Popen(['roscore'])
+	 sb.Popen(['roscore'])
 	
 	# launch the vision program
 	sb.Popen([bvExecutable])
@@ -43,8 +43,8 @@ def main():
 	# Wait for rospy to shutdown before exiting
 	# when it gets implemented this will help kill
 	# running processes.
-	while not rospy.is_shutdown():
-		time.sleep(1)
+	#while not rospy.is_shutdown():
+		#time.sleep(1)
 
 	print('roscore shutdown exiting:...')
 
