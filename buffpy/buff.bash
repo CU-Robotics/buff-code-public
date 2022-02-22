@@ -18,7 +18,7 @@ if [[ "$(uname)" == "MINGW"* ]]; then
 else
 	alias spinup="docker run -it \
 	-e DISPLAY=host.docker.internal:0 \
-	-v ${PROJECT_ROOT}:/home/cu-robotics/buff-code \
+	-v ${PROJECT_ROOT} \
 	--net=host "
 fi
 
