@@ -1,0 +1,50 @@
+# flywheel_control
+// Concept for custom controls stack interpreter language.
+
+// Give the interpreter the name of the state and config structs, which it will automatically use from now on.
+def_state_name shooter
+def_config_name shooter
+
+// Define control objects with "tracking" -- the variable names must match their substruct names in the state and config structs.
+tracking flywheel motor(m3508, 1, 2) // flywheel
+tracking feeder motor(m2006, 2, 2) // feeder
+
+// Set the input to each control object, which is stored internally.
+// Lines inside curly brackets are interpreted as c++, where the evaluation from "return" is used as the final value.
+// All state structs are accesible in this scope.
+flywheel set_input {
+  switch(state.refSystem.barrel1.speedLimit) {
+    case 17: // slow
+      return 6000;
+    case 30: // fast
+      return 9000;
+  }
+}
+feeder set_input {
+  switch(state.driverInput.17mmShooterMode) {
+    case -1: // reverse/unjam
+      return -60 * 36; // multiply by 36 to account for gear ratio
+    case 1: // slow
+      return 100 * 36;
+    case 2: // fast
+      return 140 * 36;
+    case 3: // burst
+      return 240 * 36;
+    default: // off or invalid state
+      return 0;
+  }
+}
+
+// Apply bounds and limits, which may change the input value if it is deemed invalid.
+// Uses the name of the control object to pull limit values from config structs.
+flywheel apply_limits
+
+// Generate a control output with a control law of choice, in this case velocity pid.
+// Output is automatically saved the the control output behind the scenes.
+flywheel generate(pid_vel)
+feeder generate(pid_vel)
+
+// Sets the motor powers to the control object's internal output variable.
+// If no control law was applied to the object, it defaults to zero.
+flywheel set_motor
+feeder set_motor
