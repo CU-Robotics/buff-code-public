@@ -14,13 +14,13 @@ $SUDO xargs apt install -y --no-install-recommends <${PROJECT_ROOT}/buffpy/confi
 #	Install pip with get-pip
 #
 
-echo -e "\n\tInstalling pip3\n"
+# echo -e "\n\tInstalling pip3\n"
 
-curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o get-pip.py
+# curl https://bootstrap.pypa.io/pip/3.6/get-pip.py -o get-pip.py
 
-$SUDO python3 get-pip.py
+# $SUDO python3 get-pip.py
 
-rm get-pip.py
+# rm get-pip.py
 
 
 #

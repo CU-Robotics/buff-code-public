@@ -8,7 +8,7 @@ robot: 'infantry'
 can:
   - ["fl_drive", "1", "0", "0"]
   - ["fl_steer", "1", "0", "1"]
-  - ["gimbal_pan", "1", "2", "1"]
+  - ["gimbal_pan", "2", "2", "1"]
 
 fl_steer_gains:
   - [0.0, 0.0, 0.0]
