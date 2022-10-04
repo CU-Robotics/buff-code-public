@@ -16,7 +16,7 @@ byte msg[8];
 // FlexCAN_T4<CAN1, RX_SIZE_256, TX_SIZE_16> can1;
 // FlexCAN_T4<CAN2, RX_SIZE_256, TX_SIZE_16> can2;
 
-// CAN_message_t can_input[6];
+CAN_message_t can_input;
 
 // Runs once
 void setup() {
@@ -28,6 +28,14 @@ void setup() {
  	// Hardware setup
 	pinMode(LED_BUILTIN, OUTPUT);
 	digitalWrite(LED_BUILTIN, HIGH);
+
+	int16_t newPower = (int16_t)(0.1 * 30000);
+  // Serial.print("newPower: ");
+  // Serial.println(newPower);
+    byte byteOne = highByte(newPower);
+    byte byteTwo = lowByte(newPower);
+    can_input.buf[4] = byteOne;
+    can_input.buf[5] = byteTwo;
 }
 
 void blink(){
@@ -47,13 +55,15 @@ void blink(){
 void loop() {
 	top_time = micros();
 
-	buffcan.read_can2(buff);
+	buffcan.read_can1(buff);
 
-	int16_t power = (int16_t)(0.25 * sin(millis() / 1000) * 16384);
+	int16_t power = (int16_t)(0.3 * 16384);
 	msg[0] = highByte(power);
 	msg[1] = lowByte(power);
+	Serial.println(power);
+	// prettyprint_can_message(
 
-	buffcan.set_input(2, 0, msg);
+	buffcan.set_input(2, 2, msg);
 
 	// for (int i = 0; i < 4; i++) {
 	// 	for (int j = 0; j < 16; j++){

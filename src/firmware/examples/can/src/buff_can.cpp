@@ -3,7 +3,11 @@
 
 #include "buff_can.h"
 
-
+/**
+ * @brief does a print of the can message pointed to by msg to main serial port
+ * 
+ * @param msg pointer to a CAN_message_t object
+ */
 void print_can_message(CAN_message_t* msg) {
     Serial.println("======");
     Serial.print("id: "); Serial.println(msg->id - 0x200, HEX);
@@ -26,6 +30,11 @@ void print_can_message(CAN_message_t* msg) {
     Serial.println(msg->buf[7]);  
 }
 
+/**
+ * @brief does a pretty print of the can message pointed to by msg to main serial port
+ * 
+ * @param msg pointer to a CAN_message_t object
+ */
 void prettyprint_can_message(CAN_message_t* msg) {
     Serial.println("======");
     Serial.print("id: "); Serial.println(msg->id - 0x200, HEX);
@@ -50,6 +59,10 @@ BuffCan::BuffCan(){
     }
 }
 
+/**
+ * @brief Sets all CAN messages to zero outputs
+ * 
+ */
 void BuffCan::zero_can() {
     for (int i = 0; i < 3; i++){
         for (int j = 0; j < 8; j++){
@@ -59,6 +72,10 @@ void BuffCan::zero_can() {
     }
 }
 
+/**
+ * @brief takes messages in input buffer and sends them out over CAN1 and CAN2
+ * 
+ */
 void BuffCan::write(){
     for (int i = 0; i < 3; i++){
         can1.write(input[0][i]);
@@ -66,6 +83,13 @@ void BuffCan::write(){
     }
 }
 
+/**
+ * @brief sets an input buffer value
+ * 
+ * @param can can bus number (1 or 2)
+ * @param mid sets which message object to set (1,2, or 3)
+ * @param msg pointer to array of 8 bytes to be put into the message object
+ */
 void BuffCan::set_input(int can, int mid, byte* msg){
     // Serial.print("Setting can "); Serial.println(mid);
     for (int i = 0; i < 8; i++) {
@@ -75,19 +99,23 @@ void BuffCan::set_input(int can, int mid, byte* msg){
     d_t = millis();
 }
 
+/**
+ * @brief (confirm with Mitchell that this is complete) takes data from can message object and puts it into 64 byte buffer
+ * 
+ * @param msg_ctr 
+ * @param msg 
+ * @param buff 
+ * @return int always == 1?
+ */
 int BuffCan::set_output(int msg_ctr, CAN_message_t* msg, byte* buff){
-    int msg_id = msg->id - 0x200;
+    int msg_id = msg->id - 0x200;   //does this work with gm6020s that start at 0x204 ??
 
-    if (msg_id == 255){
-        return 0;
-    }
-    uint16_t angle = map((uint16_t(msg->buf[0]) << 8) | uint16_t(msg->buf[1]), 0, 8191, 0, 36000);
 
     buff[(msg_ctr * 8) + 1] = msg_id / 4;
-    buff[(msg_ctr * 8) + 2] = ((msg_id % 4) * 6) + 1;
+    buff[(msg_ctr * 8) + 2] = (msg_id % 4) - 1;
 
-    buff[(msg_ctr * 8) + 3] = byte((angle && 0xFF00) >> 8);
-    buff[(msg_ctr * 8) + 4] = byte(angle && 0xFF);
+    buff[(msg_ctr * 8) + 3] = msg->buf[0];
+    buff[(msg_ctr * 8) + 4] = msg->buf[1];
 
     buff[(msg_ctr * 8) + 5] = msg->buf[2];
     buff[(msg_ctr * 8) + 6] = msg->buf[3];
@@ -103,9 +131,12 @@ void BuffCan::read_can1(byte* buff){
     CAN_message_t tmp;
     buff[0] = 1;
 
-    while (msg_ctr < 4) {
+    while (msg_ctr < 8) {
         can1.read(tmp);
-        msg_ctr += set_output(msg_ctr, &tmp, buff);
+        // if (tmp.id == 0x208)
+        // prettyprint_can_message(&tmp);
+        // msg_ctr += set_output(msg_ctr, &tmp, buff);
+        msg_ctr++;
     }  
 }
 
@@ -116,7 +147,9 @@ void BuffCan::read_can2(byte* buff){
 
     while (msg_ctr < 4) {
         can2.read(tmp);
+
         prettyprint_can_message(&tmp);
+
         msg_ctr += set_output(msg_ctr, &tmp, buff);
     }  
 }

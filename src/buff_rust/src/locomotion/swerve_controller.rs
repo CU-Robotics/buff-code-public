@@ -67,6 +67,7 @@ impl SwerveController {
                     .unwrap(),
             );
         });
+        println!("names: {:?}", names);
 
         let rmt = rmt_ctrl.clone();
 
@@ -181,31 +182,30 @@ impl SwerveController {
         // let mut ctr = 0;
         let mut f: f64 = 0.0;
         let mut timestamp;
-        let accel = 100.0; // rpm/s^2
 
-        let max_rpm = 250.0 * 34.0;
+        let max_rpm = 500.0;
         let left_joystick_vpos_max = 680.0;
         let left_joystick_vpos_min = -552.0;
         let right_joystick_vpos_max = 660.0;
         let right_joystick_vpos_min = -756.0;
-        let mut fl_steer_rpm;
+        let mut pitch_rpm;
         // let mut fl_steer_rpm;
 
         while rosrust::is_ok() {
             timestamp = Instant::now();
             let rmt = self.remote_control.read().unwrap();
             if rmt.len() > 0 {
-                println!("joystick values {} {}", rmt[3], rmt[1]);
+                // println!("joystick values {} {}", rmt[3], rmt[1]);
             }
             let mut left_joystick_vpos =
                 rmt[3].clamp(left_joystick_vpos_min, left_joystick_vpos_max);
             let mut right_joystick_vpos =
-                rmt[4].clamp(right_joystick_vpos_min, right_joystick_vpos_max);
+                rmt[1].clamp(right_joystick_vpos_min, right_joystick_vpos_max);
 
             if left_joystick_vpos >= 0.0 {
-                fl_steer_rpm = max_rpm * (left_joystick_vpos / left_joystick_vpos_max);
+                pitch_rpm = max_rpm * (left_joystick_vpos / left_joystick_vpos_max);
             } else {
-                fl_steer_rpm = -max_rpm * (left_joystick_vpos / left_joystick_vpos_min);
+                pitch_rpm = -max_rpm * (left_joystick_vpos / left_joystick_vpos_min);
             }
 
             // if prev_left_switch_pos == 3.0 && rmt[4] == 1.0 {
@@ -218,9 +218,9 @@ impl SwerveController {
             drop(rmt);
 
             // self.set_motor_pos("fl_drive".to_string(), 0.0);
-            self.set_motor_speed("fl_steer".to_string(), fl_steer_rpm);
+            self.set_motor_speed("pitch".to_string(), pitch_rpm);
             // self.set_motor_speed("fl_drive".to_string(), fl_drive_rpm);
-            println!("fl_steer_rpm: {}", fl_steer_rpm);
+            // println!("pitch_rpm: {}", pitch_rpm);
             // self.set_motor_power("fl_drive".to_string(), f.cos());
             // f += 0.005;
             // if f > 2.0 * std::f64::consts::PI {
