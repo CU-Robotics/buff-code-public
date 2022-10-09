@@ -48,7 +48,7 @@ bool ref_sys::read_serial(){
             
                 data_length = data_length | (temp << 8);       //Performing a bitwise or to join the 2 bytes into an 16 bit integer
 
-                Serial.println(data_length);
+                //Serial.println(data_length);
 
                 while(Serial2.readBytes(&temp, 1) != 1){          //This waits till another byte of data is available
                 }
@@ -106,6 +106,35 @@ bool ref_sys::read_serial(){
                 run_data -> chasis_current = temp_stat;
 
                 ////////////////////////////////////////////////////////////////////////////
+
+                                while(Serial2.readBytes(&temp, 1) != 1){ 
+                }        //This waits till another byte of data is available
+
+                temp_launch_speed = temp;
+
+                while(Serial2.readBytes(&temp, 1) != 1){ 
+                }        //This waits till another byte of data is available        //This section reads in 4 bytes and assigns them to one uint32 variable
+
+                temp_launch_speed = temp_launch_speed | (temp<<8);
+                // temp_launch_speed << 8;
+
+                while(Serial2.readBytes(&temp, 1) != 1){ 
+                }        //This waits till another byte of data is available
+
+                temp_launch_speed = temp_launch_speed | (temp<<8);
+                // temp_launch_speed << 8;
+
+                while(Serial2.readBytes(&temp, 1) != 1){ 
+                }        //This waits till another byte of data is available
+
+                temp_launch_speed = temp_launch_speed | (temp<<8);
+                // temp_launch_speed << 8;
+
+                /////////////////////////////////////////////////////////////////
+
+                run_data -> chasis_power = temp_launch_speed;
+
+                /////////////////////////////////////////////////////////////////
                                     
                 }
 
