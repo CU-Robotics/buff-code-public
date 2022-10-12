@@ -93,7 +93,7 @@ class ref_sys{
 
     bool read_serial();
 
-    bool hid_buff_write();  //maybe take a buffer pointer as an input (in progress)
+    bool hid_buff_write(byte arr[]);  //maybe take a buffer pointer as an input (in progress)
 
     private:
 

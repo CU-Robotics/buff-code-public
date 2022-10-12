@@ -2,15 +2,13 @@
 
 #include "ref_sys.h"
 
-DR16 receiver;
-
 //		Timing variables
 unsigned long top_time;
 unsigned long cycle_time = 10000;
 
 // Runs once
 void setup() {
-	Serial.begin(1000000);
+	Serial.begin(9600);
 
 	if (Serial)
 		Serial.println("-- TEENSY SERIAL START --");
@@ -36,7 +34,7 @@ void blink(){
 // Runs continuously
 void loop() {
 	
-    ref_data curr_data;
+    byte arr[64];
 
     ref_sys curr_ref;
 
@@ -44,7 +42,12 @@ void loop() {
 
 	blink();		
 
-	curr_ref.read();	// Read from the dr16 rx
+	curr_ref.read_serial();	// Read from the dr16 rx
+
+    curr_ref.hid_buff_write(arr);
+
+    Serial.println("Current stage");
+    Serial.println(arr[1]);
 
 
 	if (micros() - top_time > cycle_time){
