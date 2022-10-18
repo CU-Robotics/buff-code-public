@@ -8,7 +8,7 @@ unsigned long cycle_time = 10000;
 
 // Runs once
 void setup() {
-	Serial.begin(9600);
+	Serial.begin(115200);
 
 	if (Serial)
 		Serial.println("-- TEENSY SERIAL START --");
