@@ -23,12 +23,16 @@ bool ref_sys::read_serial(){
     uint8_t seq, crc, comp_stat, warning_level, robo_id, robot_level;
     uint32_t temp_launch_speed;
 
+    Serial.println("in read serial");
+
     // ref_sys curr_ref;           //Setting up an instance of our ref_sys class
    
     // put your main code here, to run repeatedly:
-    if(Serial2.available() > 1){      //The first instance to check if serial data is available
+    while(Serial2.available() == 0){Serial.println("in loop");};
+    if(Serial2.available() >= 1){      //The first instance to check if serial data is available
 
         bool gotStartByte = false;
+        Serial.println("Serial available");
 
         while(Serial2.available() > 1){
             enter_code = Serial2.read();    //It will read in the first byte of data
@@ -36,7 +40,7 @@ bool ref_sys::read_serial(){
             if(enter_code == 0xA5){         //It looks for this value that signifies that there is about to be a transmission of data
                 gotStartByte = true;
 
-                //Serial.println("Enter code received");
+                Serial.println("Enter code received");
 
                 while(Serial2.readBytes(&temp, 1) != 1){        //This waits till another byte of data is available
                 }
@@ -292,7 +296,8 @@ bool ref_sys::read_serial(){
 
                 while(Serial2.readBytes(&temp, 1) != 1){
                 }        //This waits till another byte of data is available
-
+                Serial.println(temp_hp);
+                Serial.println(temp);
                 temp_hp = temp_hp | (temp<<8);       //Performing a bitwise or to join the 2 bytes into an 16 bit integer
 
                 run_data.curr_robot_hp = temp_hp;
@@ -678,30 +683,30 @@ bool ref_sys::read_serial(){
 
 bool ref_sys::hid_buff_write(byte arr[]){
 
-    *arr[0] = 3;
-    *arr[1] = run_data.curr_stage;
-    *arr[2] = run_data.rem_time;
-    *arr[3] = run_data.ref_warning;
-    *arr[4] = run_data.blue_sentry_hp;
-    *arr[5] = run_data.red_sentry_hp;
-    *arr[6] = run_data.foul_robot_id;
-    *arr[7] = run_data.curr_robot_id;
-    *arr[8] = run_data.curr_robot_level;
-    *arr[9] = run_data.curr_robot_hp;
-    *arr[10] = run_data.curr_robot_17_cool_val;
-    *arr[11] = run_data.curr_robot_17_heat_lim;
-    *arr[12] = run_data.second_wpn_cool_val;
-    *arr[13] = run_data.second_wpn_heat_lim;
-    *arr[14] = run_data.second_wpn_speed_lim;
-    *arr[15] = run_data.chasis_volt;
-    *arr[16] = run_data.chasis_current;
-    *arr[17] = run_data.robot_power_lim;
-    *arr[18] = run_data.chasis_power;
-    *arr[19] = run_data.curr_robot_barr_heat;
-    *arr[20] = run_data.curr_robot_second_barr_heat;
-    *arr[21] = run_data.launch_id;
-    *arr[22] = run_data.launch_speed;
-    *arr[23] = run_data.launch_freq;
+    arr[0] = 3;
+    arr[1] = run_data.curr_stage;
+    arr[2] = run_data.rem_time;
+    arr[3] = run_data.ref_warning;
+    arr[4] = run_data.blue_sentry_hp;
+    arr[5] = run_data.red_sentry_hp;
+    arr[6] = run_data.foul_robot_id;
+    arr[7] = run_data.curr_robot_id;
+    arr[8] = run_data.curr_robot_level;
+    arr[9] = run_data.curr_robot_hp;
+    arr[10] = run_data.curr_robot_17_cool_val;
+    arr[11] = run_data.curr_robot_17_heat_lim;
+    arr[12] = run_data.second_wpn_cool_val;
+    arr[13] = run_data.second_wpn_heat_lim;
+    arr[14] = run_data.second_wpn_speed_lim;
+    arr[15] = run_data.chasis_volt;
+    arr[16] = run_data.chasis_current;
+    arr[17] = run_data.robot_power_lim;
+    arr[18] = run_data.chasis_power;
+    arr[19] = run_data.curr_robot_barr_heat;
+    arr[20] = run_data.curr_robot_second_barr_heat;
+    arr[21] = run_data.launch_id;
+    arr[22] = run_data.launch_speed;
+    arr[23] = run_data.launch_freq;
 
     return true;
 }
