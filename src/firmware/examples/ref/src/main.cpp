@@ -10,7 +10,7 @@ unsigned long cycle_time = 10000;
 void setup() {
 	Serial.begin(115200);
 
-	if (Serial)
+	if (Serial.available())
 		Serial.println("-- TEENSY SERIAL START --");
     
  	// Hardware setup
@@ -42,17 +42,15 @@ void loop() {
 
 	blink();		
 
-	curr_ref.read_serial();	// Read from the dr16 rx
+	curr_ref.read_serial();	
 
     curr_ref.hid_buff_write(arr);
 
-    Serial.println("Current stage");
-    Serial.println(arr[1]);
-
-
-	if (micros() - top_time > cycle_time){
-		Serial.print("Over the Cycle Limit: ");
-		Serial.println(micros() - top_time);
+	for(int i = 0; i <= 23; i++ ){
+	Serial.print(i);
+	Serial.print(" index   ");
+    Serial.println(arr[i]);
 	}
-	while (micros() - top_time < cycle_time){}
+
+	
 }
